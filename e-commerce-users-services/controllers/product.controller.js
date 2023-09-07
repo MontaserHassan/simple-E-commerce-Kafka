@@ -7,14 +7,22 @@ const { publishUserEvent } = require('../utils/publish-event.util');
 
 const createProduct = async (req, res) => {
     try {
-        const productData = req.body;
-        const product = new Product(productData);
-        await product.save();
-        publishUserEvent('product_created', product);
-        res.status(201).send({ message: 'Product created successfully', product: product });
+        const existingName = await Product.findOne({ name: req.body.name });
+        if (existingName) return res.status(400).send({ message: 'Product name already exists' });
+        const newProduct = new Product({
+            name: req.body.name,
+            category: req.body.category,
+            description: req.body.description,
+            price: req.body.price,
+            stock: req.body.stock,
+            color: req.body.color
+        });
+        await newProduct.save();
+        publishUserEvent('product_created', newProduct);
+        return res.status(201).send({ message: 'Product created successfully', product: newProduct });
     } catch (error) {
         console.error('Error creating product:', error);
-        res.status(500).send({ message: 'Internal Server Error' });
+        return res.status(500).send({ message: 'Internal Server Error' });
     }
 };
 
@@ -31,9 +39,10 @@ const sellProduct = async (req, res, next) => {
         if (req.body.quantity > product.stock) return res.status(400).send({ message: 'Insufficient stock for the requested quantity' });
         product.stock -= req.body.quantity;
         await product.save();
-        res.status(200).json({ message: 'Product sold successfully', product });
+        publishUserEvent('product_sold', product);
+        return res.status(200).json({ message: 'Product sold successfully', product });
     } catch (error) {
-        res.status(500).send({ message: 'Internal Server Error', error });
+        return res.status(500).send({ message: 'Internal Server Error', error });
     }
 };
 
@@ -52,9 +61,12 @@ const refundProduct = async (req, res) => {
 const getProducts = async (req, res) => {
     try {
         const products = await Product.find();
-        res.status(200).send({ products: products });
+        if (!products) {
+            return res.status(404).send({ message: 'No products found' });
+        }
+        return res.status(200).send({ products: products });
     } catch (error) {
-        res.status(500).send({ message: 'Internal Server Error', error });
+        return res.status(500).send({ message: 'Internal Server Error', error });
     }
 };
 

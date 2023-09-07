@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
 
 const { User } = require('../models/users.model');
+const { Notification } = require('../models/notification.model');
 const { publishUserEvent } = require('../utils/publish-event.util');
+const { consumer } = require('../../messaging/consumer-services-messaging-notifyUser');
 
 
 
@@ -142,8 +144,16 @@ const updatePassword = async (req, res) => {
 
 // --------------------------------------------- notify new product ---------------------------------------------
 
-const notifyNewProduct = async () => {
-    
+const getNotifications = async (req, res, next) => {
+    try {
+        console.log(req.user);
+        const notifications = await Notification.findOne({ userId: req.user.id });
+        if (!notifications) return res.status(404).send({ message: 'not found notifications' });
+        return res.status(200).send({ notifications: notifications });
+    } catch (error) {
+        console.error('Error creating and publishing notification:', error);
+        return res.status(error.status).send(error.message);
+    }
 };
 
 
@@ -154,5 +164,5 @@ module.exports = {
     getUserById,
     updateUserData,
     updatePassword,
-    notifyNewProduct
+    getNotifications
 };

@@ -7,10 +7,9 @@ const router = express.Router();
 
 
 router.get('/profile', userController.getUserById);
-router.get('notifications', userController.notifyNewProduct);
+router.get('/notifications', userController.getNotifications);
 router.patch('/', userController.updateUserData);
 router.patch('/password', userController.updatePassword);
-
 
 
 
