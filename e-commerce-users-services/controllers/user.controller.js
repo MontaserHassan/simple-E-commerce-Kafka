@@ -4,6 +4,7 @@ const { User } = require('../models/users.model');
 const { Notification } = require('../models/notification.model');
 const { publishUserEvent } = require('../utils/publish-event.util');
 const { consumer } = require('../../messaging/consumer-services-messaging-notifyUser');
+const { Delivery } = require('../models/delivery.model');
 
 
 
@@ -155,7 +156,18 @@ const getNotifications = async (req, res, next) => {
         return res.status(error.status).send(error.message);
     }
 };
+// -----------------------------Delivery Sold Product-----------------------------------
 
+const getDelivery = async (req, res, next) => {
+    try {
+        const delivery = await Delivery.findOne({ userId: req.user.id });
+        if (!delivery) return res.status(404).send({ message: 'not found delivery' });
+        return res.status(200).send({ delivery });
+    } catch (error) {
+        console.error('Error creating and publishing delivery:', error);
+        return res.status(error.status).send(error.message);
+    }
+};
 
 
 module.exports = {
@@ -164,5 +176,6 @@ module.exports = {
     getUserById,
     updateUserData,
     updatePassword,
-    getNotifications
+    getNotifications,
+    getDelivery
 };

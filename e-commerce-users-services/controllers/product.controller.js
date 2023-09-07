@@ -1,4 +1,5 @@
 const { Product } = require('../models/product.model');
+const productSoldToModel = require('../models/productSoldTo.model');
 const { publishUserEvent } = require('../utils/publish-event.util');
 
 
@@ -39,6 +40,11 @@ const sellProduct = async (req, res, next) => {
         if (req.body.quantity > product.stock) return res.status(400).send({ message: 'Insufficient stock for the requested quantity' });
         product.stock -= req.body.quantity;
         await product.save();
+        await productSoldToModel.create({
+            user:req.user,
+            product,
+            quantity:req.body.quantity,
+        })
         publishUserEvent('product_sold', product);
         return res.status(200).json({ message: 'Product sold successfully', product });
     } catch (error) {
