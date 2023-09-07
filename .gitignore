@@ -1,0 +1,5 @@
+/e-commerce-users-services/.env
+/e-commerce-users-services/node_modules
+/kafka-common/node_modules
+/messaging/node_modules
+.vscode

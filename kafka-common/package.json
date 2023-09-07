@@ -1,0 +1,15 @@
+{
+  "name": "kafka-common",
+  "version": "1.0.0",
+  "description": "this is common folder",
+  "main": "kafka-config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Montaser Hassan",
+  "license": "ISC",
+  "dependencies": {
+    "kafkajs": "^2.2.4",
+    "mongoose": "^7.4.3"
+  }
+}
