@@ -143,7 +143,7 @@ const updatePassword = async (req, res) => {
 // --------------------------------------------- notify new product ---------------------------------------------
 
 const notifyNewProduct = async () => {
-    console.log("new product");
+    
 };
 
 

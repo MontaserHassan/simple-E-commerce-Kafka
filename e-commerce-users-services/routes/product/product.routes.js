@@ -8,8 +8,7 @@ const router = express.Router();
 
 
 router.get('/', productController.getProducts);
-
-
+router.post('/create', productController.createProduct);
 
 
 
