@@ -32,6 +32,6 @@ services:
     ports:
       - 8080:8080
     environment:
-      - KAFKA_CLUSTERS_0_NAME=tradeling-kafka
+      - KAFKA_CLUSTERS_0_NAME=E-commerce-kafka
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181

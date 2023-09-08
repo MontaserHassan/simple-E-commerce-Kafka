@@ -3,8 +3,9 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models/users.model');
 const { Notification } = require('../models/notification.model');
 const { publishUserEvent } = require('../utils/publish-event.util');
-const { consumer } = require('../../messaging/consumer-services-messaging-notifyUser');
 const { Delivery } = require('../models/delivery.model');
+const { Product } = require('../models/product.model');
+const { SaleOperation } = require('../models/saleOperation.model');
 
 
 
@@ -145,29 +146,66 @@ const updatePassword = async (req, res) => {
 
 // --------------------------------------------- notify new product ---------------------------------------------
 
-const getNotifications = async (req, res, next) => {
+const getNotifications = async (req, res) => {
     try {
-        console.log(req.user);
-        const notifications = await Notification.findOne({ userId: req.user.id });
-        if (!notifications) return res.status(404).send({ message: 'not found notifications' });
-        return res.status(200).send({ notifications: notifications });
+        const notifications = await Notification.find({ userId: req.user.id });
+        if (!notifications || notifications.length === 0) return res.status(404).send({ message: 'No notifications found' });
+        notifications.forEach(notification => notification.read = true);
+        const savedNotifications = await Promise.all(notifications.map(notification => notification.save()));
+        return res.status(200).send({ notifications: savedNotifications });
     } catch (error) {
         console.error('Error creating and publishing notification:', error);
         return res.status(error.status).send(error.message);
     }
 };
-// -----------------------------Delivery Sold Product-----------------------------------
 
-const getDelivery = async (req, res, next) => {
+
+// ----------------------------- delivery Sold Product -----------------------------------
+
+
+const getDelivery = async (req, res) => {
     try {
         const delivery = await Delivery.findOne({ userId: req.user.id });
         if (!delivery) return res.status(404).send({ message: 'not found delivery' });
-        return res.status(200).send({ delivery });
+        return res.status(200).send({ delivery: delivery });
     } catch (error) {
         console.error('Error creating and publishing delivery:', error);
         return res.status(error.status).send(error.message);
-    }
+    };
 };
+
+
+// ----------------------------- buy Product -----------------------------------
+
+
+const buyProduct = async (req, res) => {
+    try {
+        const product = await Product.findOne({ _id: req.query.productId });
+        if (!product) return res.status(404).send({ message: 'not found product' });
+        if (product.stock === 0) return res.status(404).send({ message: 'product is out of stock' });
+        if (req.body.stock <= 0) return res.status(400).send({ message: 'Product stock is not available now' });
+        if (req.body.quantity === undefined || req.body.quantity <= 0) return res.status(400).send({ message: 'Quantity must be a positive number' });
+        if (req.body.quantity > product.stock) return res.status(400).send({ message: 'Insufficient stock for the requested quantity' });
+        product.stock -= req.body.quantity;
+        await product.save();
+        const newSaleOperation = new SaleOperation({
+            user: req.user.id,
+            product: product._id,
+            quantity: req.body.quantity,
+        });
+        const savedOperation = await newSaleOperation.save();
+        console.log('savedOperation', savedOperation);
+        if (savedOperation) {
+            publishUserEvent('product_sold', newSaleOperation);
+            require('../../messaging/consumer-services-messaging-soldProduct');
+        };
+        return res.status(200).json({ message: 'the process was been successfully', operation: newSaleOperation });
+    } catch (error) {
+        console.error('Error creating and publishing delivery:', error);
+        return res.status(error.status || 500).send({ error: error.message || 'internal server error' });
+    };
+};
+
 
 
 module.exports = {
@@ -177,5 +215,6 @@ module.exports = {
     updateUserData,
     updatePassword,
     getNotifications,
-    getDelivery
+    getDelivery,
+    buyProduct,
 };

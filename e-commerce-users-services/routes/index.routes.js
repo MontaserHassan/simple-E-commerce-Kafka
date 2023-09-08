@@ -8,6 +8,7 @@ const router = express.Router();
 
 
 router.use('/product', productRoutes);
+
 router.use('/', userRoutes);
 
 

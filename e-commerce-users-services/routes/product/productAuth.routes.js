@@ -11,7 +11,6 @@ const router = express.Router();
 
 router.use(getCurrentUser);
 
-router.post('/buyProduct', productController.sellProduct);
 router.post('/refundProduct', productController.refundProduct);
 
 
