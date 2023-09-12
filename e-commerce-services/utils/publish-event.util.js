@@ -14,6 +14,7 @@ async function publishEvent(topic, eventMessage) {
         await producer.send(result);
     } catch (error) {
         console.error(`Error publishing ${topic} event:`, error.message);
+        // middleware
     } finally {
         await producer.disconnect();
     };
