@@ -1,5 +1,6 @@
 const { Product } = require('../models/product.model');
 const { publishUserEvent } = require('../utils/publish-event.util');
+const { runConsumerNotify } = require('../../messaging/consumer-services-messaging-notifyUser');
 
 
 // --------------------------------------------- create product ---------------------------------------------
@@ -20,7 +21,7 @@ const createProduct = async (req, res) => {
         const savedProduct = await newProduct.save();
         if (savedProduct) {
             publishUserEvent('product_created', savedProduct);
-            require('../../messaging/consumer-services-messaging-notifyUser');
+            runConsumerNotify();
         };
         return res.status(201).send({ message: 'Product created successfully', product: savedProduct });
     } catch (error) {

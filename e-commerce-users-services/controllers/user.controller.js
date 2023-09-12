@@ -6,7 +6,7 @@ const { publishUserEvent } = require('../utils/publish-event.util');
 const { Delivery } = require('../models/delivery.model');
 const { Product } = require('../models/product.model');
 const { SaleOperation } = require('../models/saleOperation.model');
-
+const { runConsumerSoldProduct } = require('../../messaging/consumer-services-messaging-soldProduct');
 
 
 // --------------------------------------------- create user ---------------------------------------------
@@ -115,7 +115,7 @@ const updateUserData = async (req, res) => {
 };
 
 
-// --------------------------------------------- update user ---------------------------------------------
+// --------------------------------------------- update user password ---------------------------------------------
 
 
 const updatePassword = async (req, res) => {
@@ -144,7 +144,9 @@ const updatePassword = async (req, res) => {
     };
 };
 
+
 // --------------------------------------------- notify new product ---------------------------------------------
+
 
 const getNotifications = async (req, res) => {
     try {
@@ -156,7 +158,7 @@ const getNotifications = async (req, res) => {
     } catch (error) {
         console.error('Error creating and publishing notification:', error);
         return res.status(error.status).send(error.message);
-    }
+    };
 };
 
 
@@ -186,6 +188,7 @@ const buyProduct = async (req, res) => {
         if (req.body.stock <= 0) return res.status(400).send({ message: 'Product stock is not available now' });
         if (req.body.quantity === undefined || req.body.quantity <= 0) return res.status(400).send({ message: 'Quantity must be a positive number' });
         if (req.body.quantity > product.stock) return res.status(400).send({ message: 'Insufficient stock for the requested quantity' });
+        // payment 
         product.stock -= req.body.quantity;
         await product.save();
         const newSaleOperation = new SaleOperation({
@@ -197,7 +200,7 @@ const buyProduct = async (req, res) => {
         console.log('savedOperation', savedOperation);
         if (savedOperation) {
             publishUserEvent('product_sold', newSaleOperation);
-            require('../../messaging/consumer-services-messaging-soldProduct');
+            runConsumerSoldProduct();
         };
         return res.status(200).json({ message: 'the process was been successfully', operation: newSaleOperation });
     } catch (error) {
