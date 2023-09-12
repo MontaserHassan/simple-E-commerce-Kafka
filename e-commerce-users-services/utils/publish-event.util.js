@@ -1,4 +1,4 @@
-const { producer } = require("../../messaging/producer-services-messaging");
+const { producer } = require("../../messaging/producer/producer");
 
 
 // --------------------------------------------- create user event ---------------------------------------------
@@ -11,7 +11,6 @@ async function publishUserEvent(topic, eventMessage) {
             topic: topic,
             messages: [{ value: JSON.stringify(eventMessage) }]
         };
-        // console.log('result: ', result);
         await producer.send(result);
     } catch (error) {
         console.error(`Error publishing ${topic} event:`, error.message);

@@ -6,7 +6,7 @@ const { publishUserEvent } = require('../utils/publish-event.util');
 const { Delivery } = require('../models/delivery.model');
 const { Product } = require('../models/product.model');
 const { SaleOperation } = require('../models/saleOperation.model');
-const { runConsumerSoldProduct } = require('../../messaging/consumer-services-messaging-soldProduct');
+const { runConsumerSoldProduct } = require('../../messaging/consumer/soldProduct');
 
 
 // --------------------------------------------- create user ---------------------------------------------

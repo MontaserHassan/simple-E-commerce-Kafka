@@ -8,10 +8,10 @@ const connectDB = (app) => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     }).then(() => {
-        console.log('Connected to users Database successfully');
+        console.log('Connected to Database successfully');
         startingApp(app);
     }
-    ).catch((err) => console.log("Error connecting to users database:", err));
+    ).catch((err) => console.log("Error connecting to database:", err));
 };
 
 

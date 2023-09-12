@@ -1,6 +1,6 @@
 const { Product } = require('../models/product.model');
 const { publishUserEvent } = require('../utils/publish-event.util');
-const { runConsumerNotify } = require('../../messaging/consumer-services-messaging-notifyUser');
+const { runConsumerNotify } = require('../../messaging/consumer/notifyUser');
 
 
 // --------------------------------------------- create product ---------------------------------------------
@@ -31,39 +31,6 @@ const createProduct = async (req, res) => {
 };
 
 
-// --------------------------------------------- sell product ---------------------------------------------
-
-
-// const sellProduct = async (req, res, next) => {
-//     try {
-//         const product = await Product.findById(req.params.id);
-//         if (!product) return res.status(404).json({ message: 'Product not found' });
-//         if (req.body.stock <= 0) return res.status(400).send({ message: 'Product stock is not available now' });
-//         if (req.body.quantity === undefined || req.body.quantity <= 0) return res.status(400).send({ message: 'Quantity must be a positive number' });
-//         if (req.body.quantity > product.stock) return res.status(400).send({ message: 'Insufficient stock for the requested quantity' });
-//         product.stock -= req.body.quantity;
-//         await product.save();
-//         await productSoldToModel.create({
-//             user: req.user.id,
-//             product,
-//             quantity: req.body.quantity,
-//         });
-//         publishUserEvent('product_sold', product);
-//         return res.status(200).json({ message: 'Product sold successfully', product });
-//     } catch (error) {
-//         return res.status(500).send({ message: 'Internal Server Error', error });
-//     }
-// };
-
-
-// --------------------------------------------- refund product ---------------------------------------------
-
-
-const refundProduct = async (req, res) => {
-    console.log("refund product");
-};
-
-
 // --------------------------------------------- get all product ---------------------------------------------
 
 
@@ -83,7 +50,5 @@ const getProducts = async (req, res) => {
 
 module.exports = {
     createProduct,
-    // sellProduct,
-    refundProduct,
     getProducts,
 };
