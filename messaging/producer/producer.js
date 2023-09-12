@@ -4,6 +4,8 @@ const producer = kafka.producer({
     createPartitioner: Partitioners.LegacyPartitioner,
 });
 
+
+
 module.exports = {
     producer
 };

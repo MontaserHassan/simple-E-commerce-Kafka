@@ -1,8 +1,8 @@
 const { kafka } = require('../../kafka-configuration/kafka-config');
-const { User } = require('../../e-commerce-users-services/models/users.model');
-const { Delivery } = require('../../e-commerce-users-services/models/delivery.model');
-const { Product } = require('../../e-commerce-users-services/models/product.model');
-const { Notification } = require('../../e-commerce-users-services/models/notification.model');
+const { User } = require('../../e-commerce-services/models/users.model');
+const { Delivery } = require('../../e-commerce-services/models/delivery.model');
+const { Product } = require('../../e-commerce-services/models/product.model');
+const { Notification } = require('../../e-commerce-services/models/notification.model');
 
 
 const consumer = kafka.consumer({ groupId: 'e-commerce-services-group' });
@@ -32,11 +32,13 @@ const runConsumerSoldProduct = async () => {
                     };
                 } catch (error) {
                     console.error('Error processing Kafka message:', error);
+                    // middleware
                 };
             },
         });
     }).catch((error) => {
         console.error('Error starting Kafka consumer:', error);
+        // middleware
     });
 };
 
