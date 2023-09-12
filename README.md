@@ -3,6 +3,8 @@ This Node.js project allows you to use Kafkajs with my application
 
 ## Table of Contents
 
+- [NodeJS\_E-commerce\_kafka](#nodejs_e-commerce_kafka)
+  - [Table of Contents](#table-of-contents)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
 
@@ -20,7 +22,7 @@ Before you begin, ensure you have met the following requirements:
 1. Clone the repository to your local machine:
 
    ```bash
-   git@github.com:MontaserHassan/simple-E-commerce-Kafka.git
+   git clone git@github.com:MontaserHassan/simple-E-commerce-Kafka.git
 
 2. install dependencies:
 
@@ -34,7 +36,7 @@ Before you begin, ensure you have met the following requirements:
 3. Run Docker Container:
 
    ```bash
-   cd ./simple-E-commerce-Kafka
+   cd ..
    docker compose up
 
 4. Run E-commerce App:
