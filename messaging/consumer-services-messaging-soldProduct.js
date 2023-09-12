@@ -35,7 +35,7 @@ const runConsumerSoldProduct = async () => {
                     };
                 } catch (error) {
                     console.error('Error processing Kafka message:', error);
-                }
+                };
             },
         });
     }).catch((error) => {
@@ -45,4 +45,6 @@ const runConsumerSoldProduct = async () => {
 
 
 
-runConsumerSoldProduct();
+module.exports = {
+    runConsumerSoldProduct,
+};

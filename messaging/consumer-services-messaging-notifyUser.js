@@ -12,11 +12,12 @@ const runConsumerNotify = async () => {
             eachMessage: async ({ topic, partition, message }) => {
                 try {
                     const dataFromMessage = JSON.parse(message.value);
+                    // message for special user
                     const users = await User.find();
                     for (const user of users) {
                         const notification = new Notification({
                             userId: user._id,
-                            message: dataFromMessage.name,
+                            message: dataFromMessage.name, // product name
                             read: false
                         });
                         await notification.save();
@@ -33,4 +34,6 @@ const runConsumerNotify = async () => {
 
 
 
-runConsumerNotify();
+module.exports = {
+    runConsumerNotify,
+};
