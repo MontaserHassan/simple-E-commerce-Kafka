@@ -1,15 +1,14 @@
 import { Request, Response } from "express";
 
-import Product  from '../models/product.model';
-
-const { publishEvent } = require('../utils/publish-event.util');
-const { runConsumerNotify } = require('../../messaging/consumer/notifyUser');
+import Product from '../models/product.model';
+import { publishEvent } from "../utils/publish-event.util";
+import { runConsumerNotify } from '../../messaging/consumer/notifyUser';
 
 
 // --------------------------------------------- create product ---------------------------------------------
 
 
-const createProduct = async (req:Request, res:Response) => {
+const createProduct = async (req: Request, res: Response) => {
     try {
         const existingName = await Product.findOne({ name: req.body.name });
         if (existingName) return res.status(400).send({ message: 'Product name already exists' });
@@ -36,7 +35,7 @@ const createProduct = async (req:Request, res:Response) => {
 // --------------------------------------------- get all product ---------------------------------------------
 
 
-const getProducts = async (req:Request, res:Response) => {
+const getProducts = async (req: Request, res: Response) => {
     try {
         const products = await Product.find();
         if (!products) {

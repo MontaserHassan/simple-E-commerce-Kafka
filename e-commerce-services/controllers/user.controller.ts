@@ -1,21 +1,18 @@
 import jwt from 'jsonwebtoken'
 import { Request, Response } from "express";
 
-import User  from '../models/users.model'
-import Notification  from '../models/notification.model';
-import Delivery  from '../models/delivery.model';
-import Product  from '../models/product.model';
+import User from '../models/users.model'
+import Notification from '../models/notification.model';
+import Delivery from '../models/delivery.model';
+import Product from '../models/product.model';
 import SaleOperation from '../models/saleOperation.model';
 import { publishEvent } from '../utils/publish-event.util';
-
-// Need to convert it 
-const { runConsumerSoldProduct } = require('../../messaging/consumer/soldProduct');
-
+import { runConsumerSoldProduct } from '../../messaging/consumer/soldProduct';
 
 // --------------------------------------------- create user ---------------------------------------------
 
 
-const createUser = async (req:Request, res:Response) => {
+const createUser = async (req: Request, res: Response) => {
     try {
         const { userName, email, password } = req.body;
         for (const field in req.body) {
@@ -48,13 +45,13 @@ const createUser = async (req:Request, res:Response) => {
 // --------------------------------------------- login user ---------------------------------------------
 
 
-const loginUser = async (req:Request, res:Response) => {
+const loginUser = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
         for (const field in req.body) {
             if (!req.body[field] || req.body[field][0].trim() === '') return res.status(400).send({ error: `${field} cannot be empty.` });
         }
-        const userAuthentication = await User.findOne({ email: email[0]  });
+        const userAuthentication = await User.findOne({ email: email[0] });
         if (!userAuthentication) return res.status(400).send({ error: 'Invalid email or password.' });
         const isPasswordValid = await userAuthentication.isValidPassword(password[0]);
         if (!isPasswordValid) return res.status(400).send({ error: 'Invalid email or password.' });
@@ -75,7 +72,7 @@ const loginUser = async (req:Request, res:Response) => {
 // --------------------------------------------- get user by id ---------------------------------------------
 
 
-const getUserById = async (req:Request, res:Response) => {
+const getUserById = async (req: Request, res: Response) => {
     try {
         const user = await User.findById(req.user._id).select('-password');
         if (!user) return res.status(404).send({ error: 'User not found.' });
@@ -90,10 +87,10 @@ const getUserById = async (req:Request, res:Response) => {
 // --------------------------------------------- update user ---------------------------------------------
 
 
-const updateUserData = async (req:Request, res:Response) => {
+const updateUserData = async (req: Request, res: Response) => {
     try {
         let userUpdating = await User.findById(req.user._id);
-        const { password, ...updateFields } = req.body; // Exclude password from updateFields
+        const { password, ...updateFields } = req.body;
         const savingPassword = userUpdating.password;
         console.log('savingPassword: ', savingPassword);
         console.log('userUpdating Before: ', userUpdating);
@@ -121,7 +118,7 @@ const updateUserData = async (req:Request, res:Response) => {
 // --------------------------------------------- update user password ---------------------------------------------
 
 
-const updatePassword = async (req:Request, res:Response) => {
+const updatePassword = async (req: Request, res: Response) => {
     try {
         const user = await User.findById(req.user._id);
         for (const field in req.body) {
@@ -151,7 +148,7 @@ const updatePassword = async (req:Request, res:Response) => {
 // --------------------------------------------- notify new product ---------------------------------------------
 
 
-const getNotifications = async (req:Request, res:Response) => {
+const getNotifications = async (req: Request, res: Response) => {
     try {
         const notifications = await Notification.find({ userId: req.user._id });
         if (!notifications || notifications.length === 0) return res.status(404).send({ message: 'No notifications found' });
@@ -168,7 +165,7 @@ const getNotifications = async (req:Request, res:Response) => {
 // ----------------------------- delivery Sold Product -----------------------------------
 
 
-const getDelivery = async (req:Request, res:Response) => {
+const getDelivery = async (req: Request, res: Response) => {
     try {
         const delivery = await Delivery.findOne({ userId: req.user._id });
         if (!delivery) return res.status(404).send({ message: 'not found delivery' });
@@ -183,7 +180,7 @@ const getDelivery = async (req:Request, res:Response) => {
 // ----------------------------- buy Product -----------------------------------
 
 
-const buyProduct = async (req:Request, res:Response) => {
+const buyProduct = async (req: Request, res: Response) => {
     try {
         const product = await Product.findOne({ _id: req.params.id });
         if (!product) return res.status(404).send({ message: 'not found product' });
@@ -195,7 +192,7 @@ const buyProduct = async (req:Request, res:Response) => {
         product.stock -= req.body.quantity;
         await product.save();
         console.log(req.user._id);
-        
+
         const newSaleOperation = new SaleOperation({
             user: req.user._id,
             product: product._id,
@@ -214,7 +211,7 @@ const buyProduct = async (req:Request, res:Response) => {
 };
 
 
-export default{
+export default {
     createUser,
     loginUser,
     getUserById,

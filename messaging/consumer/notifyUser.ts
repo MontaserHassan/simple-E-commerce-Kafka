@@ -1,6 +1,7 @@
 import { EachMessagePayload, kafka } from '../../kafka-configuration/kafka-config';
-import  Notification  from '../../e-commerce-services/models/notification.model'
-import User  from '../../e-commerce-services/models/users.model'
+
+import Notification from '../../e-commerce-services/models/notification.model'
+import User from '../../e-commerce-services/models/users.model'
 
 
 const consumer = kafka.consumer({ groupId: 'e-commerce-services-group' });
@@ -12,7 +13,7 @@ const runConsumerNotify = async (): Promise<void> => {
             eachMessage: async ({ topic, partition, message }: EachMessagePayload) => {
                 try {
                     if (message.value instanceof Buffer) {
-                        const messageString = message.value.toString('utf-8'); 
+                        const messageString = message.value.toString('utf-8');
                         const dataFromMessage = JSON.parse(messageString);
                         const users = await User.find();
                         const notifications = users.map((user) => ({
@@ -39,6 +40,6 @@ const runConsumerNotify = async (): Promise<void> => {
 
 
 
-module.exports = {
+export {
     runConsumerNotify,
 };
