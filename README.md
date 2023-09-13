@@ -3,8 +3,7 @@ This Node.js project allows you to use Kafkajs with my application
 
 ## Table of Contents
 
-- [NodeJS\_E-commerce\_kafka](#nodejs_e-commerce_kafka)
-  - [Table of Contents](#table-of-contents)
+  - [NodeJS\_E-commerce\_kafka](#nodejs_e-commerce_kafka)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
 
@@ -13,7 +12,7 @@ This Node.js project allows you to use Kafkajs with my application
 Before you begin, ensure you have met the following requirements:
 
 - [Node.js](https://nodejs.org/) installed on your machine.
-- [MongoDB](https://www.mongodb.com/) MongoDB Atlas account.
+- [MongoDB](https://www.mongodb.com/) MongoDB localhost.
 - [Docker](https://www.docker.com/)
 - [Kafkajs](https://kafka.js.org/docs/getting-started)
 
