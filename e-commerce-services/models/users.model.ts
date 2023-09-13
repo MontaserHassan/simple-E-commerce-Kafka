@@ -1,4 +1,5 @@
-import { Schema,model } from "mongoose";
+import { Schema, model } from "mongoose";
+
 import IUser from "../interfaces/user.interface";
 
 const bcrypt = require('bcrypt');
@@ -41,9 +42,7 @@ userSchema.methods.isValidPassword = async function (password) {
 };
 
 
-const User = model<IUser>("User",userSchema)
+const User = model<IUser>("User", userSchema)
 
 
-module.exports = {
-    User
-};
+export default User;

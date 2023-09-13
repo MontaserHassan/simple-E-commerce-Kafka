@@ -1,5 +1,7 @@
-import mongoose,{ Schema,model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
+
 import IDelivery from "../interfaces/delivery.interface";
+
 
 const deliverySchema = new Schema<IDelivery>(
     {
@@ -27,6 +29,4 @@ const Delivery = model<IDelivery>('Delivery', deliverySchema);
 
 
 
-module.exports = {
-    Delivery
-};
+export default Delivery;

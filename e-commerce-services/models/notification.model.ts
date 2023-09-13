@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-import { Schema,model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 import INotification from "../interfaces/notification.interface";
+
 
 const notificationSchema = new Schema<INotification>(
     {
@@ -25,10 +25,7 @@ const notificationSchema = new Schema<INotification>(
 );
 
 
-const Notification = model('Notification', notificationSchema);
+const Notification = model<INotification>('Notification', notificationSchema);
 
 
-
-module.exports = {
-    Notification
-};
+export default Notification;

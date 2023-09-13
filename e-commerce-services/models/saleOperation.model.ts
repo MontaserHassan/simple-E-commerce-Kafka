@@ -1,5 +1,7 @@
-import mongoose,{ Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
+
 import ISaleOperation from "../interfaces/saleOperation.interface";
+
 
 const saleOperationSchema = new Schema<ISaleOperation>(
   {
@@ -32,6 +34,5 @@ const saleOperationSchema = new Schema<ISaleOperation>(
 const SaleOperation = model<ISaleOperation>('SaleOperation', saleOperationSchema);
 
 
-module.exports = {
-  SaleOperation
-};
+
+export default SaleOperation;

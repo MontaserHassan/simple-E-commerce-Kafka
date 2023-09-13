@@ -1,26 +1,18 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 import { Application } from 'express'
+import startingApp from './startingApp.config';
 
-const { startingApp } = require('./startingApp.config');
-
-import { config } from 'dotenv';
-config();
 
 const { DATABASE_URL } = process.env;
 
-const connectDB = (app:Application) => {
-    mongoose.connect(DATABASE_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    }).then(() => {
+const connectDB = (app: Application) => {
+    mongoose.connect(DATABASE_URL).then(() => {
         console.log('Connected to Database successfully');
         startingApp(app);
     }
-    ).catch((err:Error) => console.log("Error connecting to database:", err));
+    ).catch((err: Error) => console.log("Error connecting to database:", err));
 };
 
 
 
-module.exports = {
-    connectDB,
-};
+export default connectDB;

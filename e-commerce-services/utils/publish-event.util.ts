@@ -1,10 +1,9 @@
-const { producer } = require("../../messaging/producer/producer");
-
+import { producer } from '../../messaging/producer/producer';
 
 // --------------------------------------------- create event ---------------------------------------------
 
 
-async function publishEvent(topic : string, eventMessage : Record<string, any>) : Promise<void> {
+async function publishEvent(topic: string, eventMessage: Record<string, any>): Promise<void> {
     try {
         await producer.connect();
         const result = {
@@ -21,6 +20,6 @@ async function publishEvent(topic : string, eventMessage : Record<string, any>) 
 };
 
 
-module.exports = {
+export {
     publishEvent
 };
