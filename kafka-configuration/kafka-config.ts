@@ -6,11 +6,9 @@ const kafka = new Kafka({
 });
 
 
-// export {
-//     kafka,
-//     Partitioners 
-// }
-module.exports = {
+
+export {
+    Kafka,
     kafka,
     Partitioners
 };
