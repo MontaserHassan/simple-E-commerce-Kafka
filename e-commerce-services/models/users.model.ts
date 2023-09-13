@@ -37,12 +37,11 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
-userSchema.methods.isValidPassword = async function (password) {
+userSchema.methods.isValidPassword = async function (password:String) : Promise<boolean> {
     return await bcrypt.compare(password, this.password);
 };
 
 
-const User = model<IUser>("User", userSchema)
 
+export default model<IUser>("User", userSchema)
 
-export default User;

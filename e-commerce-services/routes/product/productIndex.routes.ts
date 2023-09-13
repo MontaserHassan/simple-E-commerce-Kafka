@@ -1,6 +1,6 @@
 import { Router } from "express";
-const productRoutes = require('./product.routes');
 
+import productRoutes from './product.routes'
 
 const router = Router();
 
@@ -9,4 +9,4 @@ router.use('/', productRoutes);
 
 
 
-module.exports = router;
+export default router;

@@ -25,8 +25,6 @@ const deliverySchema = new Schema<IDelivery>(
 );
 
 
-const Delivery = model<IDelivery>('Delivery', deliverySchema);
 
+export default model<IDelivery>('Delivery', deliverySchema);
 
-
-export default Delivery;

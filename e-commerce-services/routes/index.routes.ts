@@ -1,16 +1,14 @@
 import { Router } from "express";
 
-const userRoutes = require('./user/userIndex.routes');
-const productRoutes = require('./product/productIndex.routes');
-
+import productRoutes from "./product/productIndex.routes"
+import userRoutes from "./user/userIndex.routes"
 
 const router = Router();
 
 
 router.use('/product', productRoutes);
-
 router.use('/', userRoutes);
 
 
 
-module.exports = router;
+export default router;

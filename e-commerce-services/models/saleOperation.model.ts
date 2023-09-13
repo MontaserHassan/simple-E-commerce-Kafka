@@ -31,8 +31,7 @@ const saleOperationSchema = new Schema<ISaleOperation>(
 );
 
 
-const SaleOperation = model<ISaleOperation>('SaleOperation', saleOperationSchema);
+
+export default  model<ISaleOperation>('SaleOperation', saleOperationSchema);
 
 
-
-export default SaleOperation;

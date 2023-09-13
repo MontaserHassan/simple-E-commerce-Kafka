@@ -1,4 +1,7 @@
-const { Product } = require('../models/product.model');
+import { Request, Response } from "express";
+
+import Product  from '../models/product.model';
+
 const { publishEvent } = require('../utils/publish-event.util');
 const { runConsumerNotify } = require('../../messaging/consumer/notifyUser');
 
@@ -6,7 +9,7 @@ const { runConsumerNotify } = require('../../messaging/consumer/notifyUser');
 // --------------------------------------------- create product ---------------------------------------------
 
 
-const createProduct = async (req, res) => {
+const createProduct = async (req:Request, res:Response) => {
     try {
         const existingName = await Product.findOne({ name: req.body.name });
         if (existingName) return res.status(400).send({ message: 'Product name already exists' });
@@ -25,7 +28,6 @@ const createProduct = async (req, res) => {
         };
         return res.status(201).send({ message: 'Product created successfully', product: savedProduct });
     } catch (error) {
-        console.error('Error creating product:', error);
         return res.status(500).send({ message: 'Internal Server Error' });
     };
 };
@@ -34,7 +36,7 @@ const createProduct = async (req, res) => {
 // --------------------------------------------- get all product ---------------------------------------------
 
 
-const getProducts = async (req, res) => {
+const getProducts = async (req:Request, res:Response) => {
     try {
         const products = await Product.find();
         if (!products) {
@@ -47,8 +49,7 @@ const getProducts = async (req, res) => {
 };
 
 
-
-module.exports = {
+export default {
     createProduct,
     getProducts,
-};
+}

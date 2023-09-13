@@ -25,7 +25,7 @@ const notificationSchema = new Schema<INotification>(
 );
 
 
-const Notification = model<INotification>('Notification', notificationSchema);
+
+export default  model<INotification>('Notification', notificationSchema);
 
 
-export default Notification;

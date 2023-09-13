@@ -1,4 +1,4 @@
-import { Kafka, Partitioners } from 'kafkajs'
+import { Kafka, Partitioners, EachMessagePayload } from 'kafkajs'
 
 const kafka = new Kafka({
     clientId: 'my-app',
@@ -10,5 +10,6 @@ const kafka = new Kafka({
 export {
     Kafka,
     kafka,
-    Partitioners
+    Partitioners,
+    EachMessagePayload
 };

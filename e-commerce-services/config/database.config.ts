@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { Application } from 'express'
+
 import startingApp from './startingApp.config';
 
 

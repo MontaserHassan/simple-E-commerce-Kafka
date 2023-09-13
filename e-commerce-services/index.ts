@@ -5,7 +5,7 @@ config();
 
 import connectDB from './config/database.config';
 import parseFormData from './middlewares/parse-form-data.middleware';
-const router = require('./routes/index.routes');
+import router from './routes/index.routes';
 
 
 const app = express();
