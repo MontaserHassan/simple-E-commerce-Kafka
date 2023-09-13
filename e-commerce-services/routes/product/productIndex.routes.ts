@@ -1,9 +1,8 @@
-const express = require('express');
-
+import { Router } from "express";
 const productRoutes = require('./product.routes');
 
 
-const router = express.Router();
+const router = Router();
 
 
 router.use('/', productRoutes);

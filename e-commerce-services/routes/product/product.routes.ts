@@ -1,10 +1,9 @@
-const express = require('express');
-
+import { Router } from "express";
 
 const { productController } = require('../../controllers/index.controller');
 
 
-const router = express.Router();
+const router = Router();
 
 
 router.get('/', productController.getProducts);

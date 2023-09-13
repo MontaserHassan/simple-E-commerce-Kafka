@@ -1,11 +1,10 @@
-const express = require('express');
-
+import { Router } from "express";
 const authRoutes = require('./auth.routes');
 const userRoutes = require('./user.routes');
 const { getCurrentUser } = require('../../middlewares/get-currentUser.middleware');
 
 
-const router = express.Router();
+const router = Router();
 
 
 router.use('/auth', authRoutes);
