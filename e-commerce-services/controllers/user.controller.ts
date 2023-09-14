@@ -14,29 +14,24 @@ import { runConsumerSoldProduct } from '../../messaging/consumer/soldProduct';
 
 const createUser = async (req: Request, res: Response) => {
     try {
-        const { userName, email, password } = req.body;
+        const { userName, email, password,role } = req.body;
         for (const field in req.body) {
-            if (!req.body[field][0] || req.body[field][0].trim() === '') return res.status(400).send({ error: `${field} cannot be empty.` });
+            if (!req.body[field] || req.body[field].trim() === '') return res.status(400).send({ error: `${field} cannot be empty.` });
         }
-        const existingUser = await User.findOne({ email: email[0] });
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        if(!emailRegex.test(email)) return res.status(400).send({ error: 'Invalid email format.' });
+        const existingUser = await User.findOne({ email: email });
         if (existingUser) return res.status(400).send({ error: 'This email already exists.' });
-        const newUser = new User({
-            userName: userName[0],
-            email: email[0],
-            password: password[0],
-        });
+        const newUser = new User({userName,email,password,role});
         await newUser.save();
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
         const credential = {
             token: token,
             user: newUser
         };
-        res.header('auth-token', token);
-        publishEvent('user_created', credential);
-        publishEvent('user_logged', credential);
-        res.status(201).send({ message: 'User created and logged in successfully.', credential: credential });
+        res.header('Authorization', token);
+        res.status(201).send({ message: 'User created and logged in successfully.', credential });
     } catch (error) {
-        console.error('Error creating user:', error);
         res.status(500).send({ error: 'An error occurred while creating the user.' });
     };
 };
@@ -49,22 +44,22 @@ const loginUser = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
         for (const field in req.body) {
-            if (!req.body[field] || req.body[field][0].trim() === '') return res.status(400).send({ error: `${field} cannot be empty.` });
+            if (!req.body[field] || req.body[field].trim() === '') return res.status(400).send({ error: `${field} cannot be empty.` });
         }
-        const userAuthentication = await User.findOne({ email: email[0] });
+        const userAuthentication = await User.findOne({ email: email });
         if (!userAuthentication) return res.status(400).send({ error: 'Invalid email or password.' });
-        const isPasswordValid = await userAuthentication.isValidPassword(password[0]);
+        const isPasswordValid = await userAuthentication.isValidPassword(password);
         if (!isPasswordValid) return res.status(400).send({ error: 'Invalid email or password.' });
         const token = jwt.sign({ id: userAuthentication._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
         const credential = {
             token: token,
             user: userAuthentication
         };
-        res.header('auth-token', token);
+        res.header('Authorization', token);
         publishEvent('user_logged', credential);
         res.status(200).send({ message: 'User logged in successfully.', credential: credential });
     } catch (error) {
-        console.error('Error logging in user:', error);
+        res.status(400).send({message : `Error logging in user: ${error.message}`});
     };
 };
 
@@ -79,7 +74,7 @@ const getUserById = async (req: Request, res: Response) => {
         publishEvent('user_details', user);
         res.status(200).send({ user: user });
     } catch (error) {
-        console.error('Error getting user by id:', error);
+        res.status(400).send({message : `Error getting user by id: ${error.message}`});
     };
 };
 
@@ -91,13 +86,10 @@ const updateUserData = async (req: Request, res: Response) => {
     try {
         let userUpdating = await User.findById(req.user._id);
         const { password, ...updateFields } = req.body;
-        const savingPassword = userUpdating.password;
-        console.log('savingPassword: ', savingPassword);
-        console.log('userUpdating Before: ', userUpdating);
         if (password) return res.status(400).send({ error: "Sorry, you can't change password from here" });
         const updateObject = {};
-        for (const field in updateFields) {
-            const fieldValue = updateFields[field][0].trim();
+        for (const field in updateFields) {  
+            const fieldValue = updateFields[field].trim();
             if (fieldValue === '') return res.status(400).send({ error: `${field} cannot be empty.` });
             if (field === 'email') {
                 const checkedEmail = await User.findOne({ email: fieldValue }).select('-password');
@@ -106,11 +98,10 @@ const updateUserData = async (req: Request, res: Response) => {
             updateObject[field] = fieldValue;
         };
         await userUpdating.updateOne(updateObject);
-        console.log('userUpdating After: ', userUpdating);
-        publishEvent('user_updated', userUpdating);
+
         res.status(202).send({ message: 'User Data Updated Successfully', user: userUpdating });
     } catch (error) {
-        console.error('Error updating user:', error);
+        res.status(400).send({message : `Error updating user: ${error.message}`});
     };
 };
 
@@ -122,25 +113,18 @@ const updatePassword = async (req: Request, res: Response) => {
     try {
         const user = await User.findById(req.user._id);
         for (const field in req.body) {
-            if (req.body[field][0].trim() === '') {
+            if (req.body[field].trim() === '') {
                 return res.status(400).send({ error: `${field} cannot be empty.` });
             }
         }
-        console.log('userBefore: ', user);
-        if (req.body.oldPassword[0] === req.body.newPassword[0]) return res.status(400).send({ error: 'New password cannot be the same as the old password.' });
-        const oldPasswordValid = await user.isValidPassword(req.body.oldPassword[0]);
+        if (req.body.oldPassword === req.body.newPassword) return res.status(400).send({ error: 'New password cannot be the same as the old password.' });
+        const oldPasswordValid = await user.isValidPassword(req.body.oldPassword);
         if (!oldPasswordValid) return res.status(400).send({ error: 'Invalid old password.' });
-        // const newPasswordValid = await user.isValidPassword(req.body.newPassword[0]);
-        // console.log(newPasswordValid);
-        // if (newPasswordValid) return res.status(400).send({ error: 'New password cannot be the same as the old password.' });
-        user.password = req.body.newPassword[0];
+        user.password = req.body.newPassword;
         const newData = await user.save();
-        console.log('userAfter: ', user);
-        console.log('newData: ', newData);
-        publishEvent('user_updated_password', user);
         res.status(200).send({ message: 'User Password Updated Successfully', user: user });
     } catch (error) {
-        console.error('Error updating user:', error);
+        res.status(400).send({message : `Error updating user: ${error.message}`});
     };
 };
 
@@ -156,8 +140,7 @@ const getNotifications = async (req: Request, res: Response) => {
         const savedNotifications = await Promise.all(notifications.map(notification => notification.save()));
         return res.status(200).send({ notifications: savedNotifications });
     } catch (error) {
-        console.error('Error creating and publishing notification:', error);
-        return res.status(error.status).send(error.message);
+        res.status(400).send({message : `Error creating and publishing notification: ${error.message}`});
     };
 };
 
@@ -171,8 +154,7 @@ const getDelivery = async (req: Request, res: Response) => {
         if (!delivery) return res.status(404).send({ message: 'not found delivery' });
         return res.status(200).send({ delivery: delivery });
     } catch (error) {
-        console.error('Error creating and publishing delivery:', error);
-        return res.status(error.status).send(error.message);
+        res.status(400).send({message : `Error creating and publishing delivery: ${error.message}`});
     };
 };
 
@@ -191,7 +173,6 @@ const buyProduct = async (req: Request, res: Response) => {
         // payment 
         product.stock -= req.body.quantity;
         await product.save();
-        console.log(req.user._id);
 
         const newSaleOperation = new SaleOperation({
             user: req.user._id,
@@ -205,7 +186,6 @@ const buyProduct = async (req: Request, res: Response) => {
         };
         return res.status(200).json({ message: 'the process was been successfully', operation: newSaleOperation });
     } catch (error) {
-        console.error('Error creating and publishing delivery:', error);
         return res.status(error.status || 500).send({ error: error.message || 'internal server error' });
     };
 };

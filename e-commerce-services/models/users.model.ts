@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-import IUser from "../interfaces/user.interface";
+import {IUser,Role} from "../interfaces/user.interface";
 
 const bcrypt = require('bcrypt');
 
@@ -18,6 +18,11 @@ const userSchema = new Schema<IUser>(
         password: {
             type: String,
             required: true
+        },
+        role: {
+            type: String,
+            enum: Object.values(Role),
+            default: Role.USER,
         },
     },
     {
