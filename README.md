@@ -13,8 +13,8 @@ Before you begin, ensure you have met the following requirements:
 
 - [Node.js](https://nodejs.org/) installed on your machine.
 - [MongoDB](https://www.mongodb.com/) MongoDB localhost.
-- [Docker](https://www.docker.com/)
-- [Kafkajs](https://kafka.js.org/docs/getting-started)
+- [Docker](https://www.docker.com/) 
+- [Kafkajs](https://kafka.js.org/docs/getting-started) apache kafka client
 
 ## Installation
 
@@ -39,13 +39,29 @@ Before you begin, ensure you have met the following requirements:
    docker compose up
 
 4. Run E-commerce App:
+
     ```bash
     cd e-commerce-services
     npm start
+
+5. Run Messaging-Notification App:
+
+    ```bash
+    cd ../messaging-notify
+    npm start
+
+6. Run Messaging-Sold App:
+
+    ```bash
+    cd ../Messaging-sold
+    npm start
+
+
 
 <h2>App Features:</h2>
 <ol>
  <li>User can register and login</li>
  <li>User can update  his data.</li>
- <li>User can buy product then will received a notification and create order delivery.</li>
+ <li>User will receive notification after add new product in database.</li>
+ <li>User can buy product then will receive a notification and create order delivery.</li>
 </ol>
