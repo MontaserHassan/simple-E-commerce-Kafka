@@ -1,7 +1,7 @@
 import { Kafka, Partitioners, EachMessagePayload } from 'kafkajs'
 
 const kafka = new Kafka({
-    clientId: 'my-app',
+    clientId: 'E-commerce-kafka',
     brokers: ['localhost:9093'],
 });
 

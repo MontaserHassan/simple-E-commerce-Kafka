@@ -4,7 +4,7 @@ const { PORT } = process.env;
 
 const startingApp = (app: Application) => {
     app.listen(PORT, () => {
-        console.log(`Listening on port ${PORT}`);
+        console.log(`E-commerce is Listening on port ${PORT}`);
     });
 };
 

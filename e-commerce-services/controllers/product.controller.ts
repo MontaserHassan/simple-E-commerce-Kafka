@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import Product from '../models/product.model';
 import { publishEvent } from "../utils/publish-event.util";
-import { runConsumerNotify } from '../../messaging/consumer/notifyUser';
+import User from "../models/users.model";
 
 
 // --------------------------------------------- create product ---------------------------------------------
@@ -10,8 +10,8 @@ import { runConsumerNotify } from '../../messaging/consumer/notifyUser';
 
 const createProduct = async (req: Request, res: Response) => {
     try {
-        const existingName = await Product.findOne({ name: req.body.name });
-        if (existingName) return res.status(400).send({ message: 'Product name already exists' });
+        // const existingName = await Product.findOne({ name: req.body.name });
+        // if (existingName) return res.status(400).send({ message: 'Product name already exists' });
         const newProduct = new Product({
             name: req.body.name,
             category: req.body.category,
@@ -20,10 +20,15 @@ const createProduct = async (req: Request, res: Response) => {
             stock: req.body.stock,
             color: req.body.color
         });
+        let messageKafka: object;
         const savedProduct = await newProduct.save();
+        const users = await User.find();
         if (savedProduct) {
-            publishEvent('product_created', savedProduct);
-            runConsumerNotify();
+            messageKafka = {
+                product: savedProduct,
+                users: users
+            };
+            publishEvent('product_created', messageKafka);
         };
         return res.status(201).send({ message: 'Product created successfully', product: savedProduct });
     } catch (error) {
